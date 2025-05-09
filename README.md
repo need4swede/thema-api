@@ -1,231 +1,97 @@
-# Thema Subject Codes API
+# Thema API
 
-A REST API for accessing Thema Subject Codes and their associated metadata.
+Thema Subject Codes REST API
 
-## Overview
+## Security Improvements
 
-This API provides access to Thema Subject Codes and their associated metadata, sourced from a definitive JSON file. It follows RESTful principles and returns data in JSON format.
+This project has been optimized for Docker security with the following features:
+
+- Multi-stage build to reduce attack surface
+- Non-root user execution
+- Read-only filesystem with tmpfs for writable directories
+- Resource limits to prevent resource exhaustion attacks
+- Health checks for container monitoring
+- Specific version pinning for better security patching
+- SBOM (Software Bill of Materials) generation using Docker Scout
+- Provenance attestation for supply chain security using Docker Scout
+- Security vulnerability fixes for:
+  - OpenSSL (CVE-2024-5535, CVE-2024-4741, CVE-2024-6119)
+  - Musl (CVE-2025-26519)
+  - Cross-spawn (CVE-2024-21538) - fixed using package-lock.override.json to force version 7.0.5 throughout the dependency tree
+
+## Building the Docker Image
+
+To build the Docker image with all security features enabled:
+
+```bash
+# Make the build script executable (if not already)
+chmod +x build.sh
+
+# Run the build script
+./build.sh
+```
+
+The build script performs the following actions:
+1. Enables Docker BuildKit for enhanced build capabilities
+2. Creates a buildx builder instance if it doesn't exist
+3. Builds the image with provenance and SBOM flags enabled
+4. Generates a Software Bill of Materials (SBOM) using Docker Scout
+5. Attaches the SBOM to the image as an attestation
+6. Generates and attaches a provenance attestation with max mode
+
+These steps ensure that the image meets Docker Scout's supply chain security requirements for:
+- SBOM attestation
+- Provenance attestation with max mode
+
+## Running the Container
+
+### Option 1: Using your locally built image
+
+After building the image, you can run the container using:
+
+```bash
+docker-compose up -d
+```
+
+### Option 2: Using the prebuilt image
+
+If you prefer to use the prebuilt image without building locally:
+
+```bash
+docker-compose -f docker-compose.prebuilt.yml up -d
+```
+
+The API will be available at http://localhost:3000 in both cases.
+
+## Security Best Practices
+
+- The container runs as a non-root user
+- The filesystem is mounted as read-only
+- Data volumes are mounted as read-only
+- Resource limits are enforced
+- Network binding is restricted to localhost
+- Security options like no-new-privileges are enabled
+- Logging is limited to prevent disk space attacks
+
+## Vulnerability Mitigation Details
+
+### Cross-spawn Vulnerability (CVE-2024-21538)
+
+The cross-spawn package is a transitive dependency that appears in layer 3 of the Docker image. To fix this vulnerability:
+
+1. Created a package-lock.override.json file that forces cross-spawn to version 7.0.5
+2. Modified the Dockerfile to merge this override with the generated package-lock.json
+3. Used jq to combine the files: `jq -s '.[0] * .[1]' package-lock.json package-lock.override.json`
+4. Verified the installation with `npm ls cross-spawn`
+
+This approach ensures that all instances of cross-spawn in the dependency tree are updated to the secure version, even if they are transitive dependencies.
 
 ## API Documentation
 
-### Base URL
+The API provides access to Thema Subject Codes with the following endpoints:
 
-```
-/api/v1
-```
-
-### Authentication
-
-This version of the API does not require authentication.
-
-### Data Format
-
-All requests and responses are in JSON format. API responses use camelCase for field names. Dates from the source JSON (originally in YYYYMMDD format) are returned in ISO 8601 format (YYYY-MM-DD).
-
-### Endpoints
-
-#### 1. Get API Metadata
-
-Provides metadata about the Thema CodeList itself.
-
-- **Endpoint**: `GET /api/v1/metadata`
-- **Method**: GET
-- **Description**: Retrieves high-level information about the Thema Subject Code list, such as its description, version, issue date, etc.
-- **Response Example**:
-  ```json
-  {
-    "codeListNumber": 214,
-    "codeListDescription": "Thema Subject Codes",
-    "issueNumber": 1.6,
-    "versionNumber": "v1.6.0",
-    "issueDate": "2024-10-31",
-    "lastUpdated": "2025-04-10",
-    "totalCodes": 9187
-  }
-  ```
-
-#### 2. Get All Codes
-
-Retrieves a paginated list of all Thema Subject Codes.
-
-- **Endpoint**: `GET /api/v1/codes`
-- **Method**: GET
-- **Query Parameters**:
-  - `page` (optional): Page number for pagination (default: 1)
-  - `limit` (optional): Number of codes per page (default: 100)
-- **Response Example**:
-  ```json
-  {
-    "pagination": {
-      "total": 9187,
-      "page": 1,
-      "limit": 100,
-      "pages": 92
-    },
-    "data": [
-      {
-        "codeValue": "A",
-        "codeDescription": "The Arts",
-        "codeNotes": "Use all A* codes for: specialist and general adult titles...",
-        "codeParent": "",
-        "issueNumber": 1,
-        "modified": 1.4
-      },
-      // More codes...
-    ]
-  }
-  ```
-
-#### 3. Get a Specific Code
-
-Retrieves details for a specific Thema Subject Code.
-
-- **Endpoint**: `GET /api/v1/codes/:codeValue`
-- **Method**: GET
-- **URL Parameters**:
-  - `codeValue`: The value of the code to retrieve
-- **Response Example**:
-  ```json
-  {
-    "codeValue": "AB",
-    "codeDescription": "The arts: general topics",
-    "codeNotes": null,
-    "codeParent": "A",
-    "issueNumber": 1,
-    "modified": 1.5
-  }
-  ```
-
-#### 4. Search for Codes
-
-Searches for Thema Subject Codes based on query parameters.
-
-- **Endpoint**: `GET /api/v1/codes/search`
-- **Method**: GET
-- **Query Parameters**:
-  - `query` (optional): Search term to match against code values and descriptions
-  - `parent` (optional): Filter codes by parent code value
-  - `page` (optional): Page number for pagination (default: 1)
-  - `limit` (optional): Number of codes per page (default: 100)
-- **Response Example**:
-  ```json
-  {
-    "pagination": {
-      "total": 42,
-      "page": 1,
-      "limit": 100,
-      "pages": 1
-    },
-    "data": [
-      {
-        "codeValue": "ABC",
-        "codeDescription": "Conservation, restoration and care of artworks",
-        "codeNotes": "Use with: other A* codes for works about...",
-        "codeParent": "AB",
-        "issueNumber": 1,
-        "modified": 1.5
-      },
-      // More codes...
-    ]
-  }
-  ```
-
-#### 5. Get Children of a Code
-
-Retrieves all direct children of a specific Thema Subject Code.
-
-- **Endpoint**: `GET /api/v1/codes/:codeValue/children`
-- **Method**: GET
-- **URL Parameters**:
-  - `codeValue`: The value of the parent code
-- **Response Example**:
-  ```json
-  {
-    "parent": "A",
-    "count": 26,
-    "children": [
-      {
-        "codeValue": "AB",
-        "codeDescription": "The arts: general topics",
-        "codeNotes": null,
-        "codeParent": "A",
-        "issueNumber": 1,
-        "modified": 1.5
-      },
-      // More codes...
-    ]
-  }
-  ```
-
-### Error Handling
-
-The API uses standard HTTP status codes to indicate the success or failure of a request. Error responses will be in JSON format and include a message detailing the error.
-
-**Common Error Response Structure**:
-```json
-{
-  "error": {
-    "status": 404,
-    "message": "Code with value 'XYZ' not found",
-    "code": "CODE_NOT_FOUND"
-  }
-}
-```
-
-**Common Status Codes**:
-- 200 OK: The request was successful.
-- 400 Bad Request: The request was malformed or contained invalid parameters.
-- 404 Not Found: The requested resource could not be found.
-- 500 Internal Server Error: An unexpected error occurred on the server.
-
-## Running the API
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-- Docker and Docker Compose (for containerized deployment)
-
-### Local Development
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd thema-api
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-   The API will be available at http://localhost:3000/api/v1
-
-### Production Deployment with Docker
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd thema-api
-   ```
-
-2. Build and start the Docker container:
-   ```bash
-   docker-compose up -d
-   ```
-
-   The API will be available at http://localhost:3000/api/v1
-
-3. To stop the container:
-   ```bash
-   docker-compose down
-   ```
-
-## License
-
-[ISC](LICENSE)
+- GET /api/v1/metadata - Get metadata about the code list
+- GET /api/v1/codes - Get all codes (with pagination)
+- GET /api/v1/codes/search - Search for codes
+- GET /api/v1/codes/:codeValue - Get a specific code by its value
+- GET /api/v1/codes/:codeValue/children - Get children of a specific code

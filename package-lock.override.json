@@ -1,0 +1,17 @@
+{
+    "packages": {
+        "node_modules/cross-spawn": {
+            "version": "7.0.5",
+            "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.5.tgz",
+            "integrity": "sha512-eXXWntTZSu5Cb5rKjO+aCTjLgXSFG7uK3eZeQD+ULelCT0733vCX7NhKzX9XjUCoDNDsUyVoNL+YgCQAiKQ9A==",
+            "dependencies": {
+                "path-key": "^3.1.0",
+                "shebang-command": "^2.0.0",
+                "which": "^2.0.1"
+            },
+            "engines": {
+                "node": ">= 8"
+            }
+        }
+    }
+}

@@ -21,9 +21,27 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // Load data
 let themaData;
 try {
-    const dataPath = path.join(__dirname, '..', 'data.json');
+    // Check both possible data paths (for Docker and local development)
+    const possiblePaths = [
+        path.join(__dirname, '..', 'data', 'data.json'), // Docker path
+        path.join(__dirname, '..', 'data.json')          // Local development path
+    ];
+
+    let dataPath;
+    for (const p of possiblePaths) {
+        if (fs.existsSync(p)) {
+            dataPath = p;
+            break;
+        }
+    }
+
+    if (!dataPath) {
+        throw new Error('Data file not found in any of the expected locations');
+    }
+
     const rawData = fs.readFileSync(dataPath, 'utf8');
     themaData = JSON.parse(rawData);
+    console.log(`Successfully loaded data from: ${dataPath}`);
 } catch (error) {
     console.error('Error loading data:', error);
     process.exit(1);
