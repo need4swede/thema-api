@@ -137,9 +137,17 @@ app.get('/api/v1/codes/search', (req, res) => {
             );
         }
 
-        // Filter by parent code
+        // Filter by parent code (case insensitive)
         if (parent) {
-            filteredCodes = filteredCodes.filter(code => code.CodeParent === parent);
+            // First find the actual parent code with correct casing
+            const parentCode = codes.find(c => c.CodeValue.toLowerCase() === parent.toLowerCase());
+            if (parentCode) {
+                // Use the correctly cased parent code value for filtering
+                filteredCodes = filteredCodes.filter(code => code.CodeParent === parentCode.CodeValue);
+            } else {
+                // If parent code doesn't exist, return empty results
+                filteredCodes = [];
+            }
         }
 
         // Apply pagination
@@ -185,7 +193,8 @@ app.get('/api/v1/codes/:codeValue', (req, res) => {
         const codeValue = req.params.codeValue;
         const codes = themaData.CodeList.ThemaCodes.Code;
 
-        const code = codes.find(c => c.CodeValue === codeValue);
+        // Case insensitive comparison for code value
+        const code = codes.find(c => c.CodeValue.toLowerCase() === codeValue.toLowerCase());
 
         if (!code) {
             return res.status(404).json({
@@ -225,8 +234,8 @@ app.get('/api/v1/codes/:codeValue/children', (req, res) => {
         const codeValue = req.params.codeValue;
         const codes = themaData.CodeList.ThemaCodes.Code;
 
-        // Check if the parent code exists
-        const parentExists = codes.some(c => c.CodeValue === codeValue);
+        // Check if the parent code exists (case insensitive)
+        const parentExists = codes.some(c => c.CodeValue.toLowerCase() === codeValue.toLowerCase());
 
         if (!parentExists) {
             return res.status(404).json({
@@ -238,8 +247,11 @@ app.get('/api/v1/codes/:codeValue/children', (req, res) => {
             });
         }
 
-        // Find all children
-        const children = codes.filter(c => c.CodeParent === codeValue);
+        // Find the actual code value with correct casing
+        const actualCodeValue = codes.find(c => c.CodeValue.toLowerCase() === codeValue.toLowerCase()).CodeValue;
+
+        // Find all children (case sensitive for the actual stored value)
+        const children = codes.filter(c => c.CodeParent === actualCodeValue);
 
         const formattedChildren = children.map(code => ({
             codeValue: code.CodeValue,
