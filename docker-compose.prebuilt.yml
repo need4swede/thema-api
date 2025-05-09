@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  thema-api:
+    image: need4swede/thema-api:latest
+    container_name: thema-api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data.json:/app/data.json
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
