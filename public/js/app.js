@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Current state
     let currentResponseData = null;
 
+    // Output section element
+    const outputSection = document.querySelector('.output-section');
+
     // Endpoint switching functionality
     endpoints.forEach(endpoint => {
         endpoint.addEventListener('click', () => {
@@ -33,6 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     pane.classList.add('active');
                 }
             });
+
+            // Show/hide output section based on endpoint
+            if (endpointId === 'api-docs') {
+                outputSection.style.display = 'none';
+            } else {
+                outputSection.style.display = 'flex';
+            }
 
             // Clear output
             clearOutput();

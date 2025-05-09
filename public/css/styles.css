@@ -461,6 +461,7 @@ input::placeholder {
     cursor: pointer;
     font-size: 11px;
     transition: all 0.2s ease;
+    background-color: var(--background-secondary);
 }
 
 .pagination button:hover:not(:disabled) {
@@ -476,6 +477,111 @@ input::placeholder {
 .pagination button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* API Documentation Styles */
+.api-docs-content {
+    padding: var(--spacing-md);
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+.api-docs-content h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: var(--spacing-md) 0 var(--spacing-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+}
+
+.api-docs-content h3:first-child {
+    margin-top: 0;
+}
+
+.api-docs-content h4 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: var(--spacing-md) 0 var(--spacing-xs);
+    color: var(--accent-blue);
+}
+
+.api-docs-content p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.api-docs-content ul {
+    margin-left: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.api-docs-content li {
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-secondary);
+}
+
+.api-docs-content code {
+    background-color: var(--background-tertiary);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 12px;
+    color: var(--accent-orange);
+}
+
+.code-block {
+    background-color: var(--background-tertiary);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 12px;
+    color: var(--accent-orange);
+    margin-bottom: var(--spacing-md);
+}
+
+.endpoint-doc {
+    background-color: var(--background-tertiary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.endpoint-details {
+    margin: var(--spacing-sm) 0;
+}
+
+.endpoint-details div {
+    margin-bottom: var(--spacing-xs);
+}
+
+.response-example {
+    margin-top: var(--spacing-sm);
+}
+
+.response-example pre {
+    background-color: var(--background-secondary);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    margin-top: var(--spacing-xs);
+}
+
+.response-example code {
+    background-color: transparent;
+    padding: 0;
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.status-codes ul {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+.status-codes li {
+    margin-bottom: var(--spacing-xs);
 }
 
 /* Responsive adjustments */
@@ -516,5 +622,9 @@ input::placeholder {
 
     .output-section {
         margin: var(--spacing-sm);
+    }
+
+    .api-docs-content {
+        max-height: none;
     }
 }

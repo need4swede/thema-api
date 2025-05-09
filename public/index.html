@@ -40,6 +40,10 @@
                 <i class="fas fa-sitemap"></i>
                 <span>Get Children</span>
             </div>
+            <div class="endpoint" data-endpoint="api-docs">
+                <i class="fas fa-book"></i>
+                <span>API Docs</span>
+            </div>
         </nav>
 
         <!-- Middle Section: User Input -->
@@ -101,6 +105,204 @@
                         <input type="text" id="parent-value" placeholder="Enter parent code value">
                     </div>
                     <button id="children-submit" class="btn-primary">Get Children</button>
+                </div>
+            </div>
+
+            <div class="endpoint-pane" id="api-docs-pane">
+                <h2>API Documentation</h2>
+                <div class="api-docs-content">
+                    <h3>Base URL</h3>
+                    <div class="code-block">/api/v1</div>
+
+                    <h3>Authentication</h3>
+                    <p>This version of the API does not require authentication.</p>
+
+                    <h3>Data Format</h3>
+                    <p>All requests and responses are in JSON format. API responses use camelCase for field names. Dates
+                        from the source JSON (originally in YYYYMMDD format) are returned in ISO 8601 format
+                        (YYYY-MM-DD).</p>
+
+                    <h3>Endpoints</h3>
+
+                    <div class="endpoint-doc">
+                        <h4>1. Get API Metadata</h4>
+                        <p>Provides metadata about the Thema CodeList itself.</p>
+                        <div class="endpoint-details">
+                            <div><strong>Endpoint:</strong> <code>GET /api/v1/metadata</code></div>
+                            <div><strong>Method:</strong> GET</div>
+                            <div><strong>Description:</strong> Retrieves high-level information about the Thema Subject
+                                Code list, such as its description, version, issue date, etc.</div>
+                        </div>
+                        <div class="response-example">
+                            <strong>Response Example:</strong>
+                            <pre><code>{
+  "codeListNumber": 214,
+  "codeListDescription": "Thema Subject Codes",
+  "issueNumber": 1.6,
+  "versionNumber": "v1.6.0",
+  "issueDate": "2024-10-31",
+  "lastUpdated": "2025-04-10",
+  "totalCodes": 9187
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-doc">
+                        <h4>2. Get All Codes</h4>
+                        <p>Retrieves a paginated list of all Thema Subject Codes.</p>
+                        <div class="endpoint-details">
+                            <div><strong>Endpoint:</strong> <code>GET /api/v1/codes</code></div>
+                            <div><strong>Method:</strong> GET</div>
+                            <div><strong>Query Parameters:</strong></div>
+                            <ul>
+                                <li><code>page</code> (optional): Page number for pagination (default: 1)</li>
+                                <li><code>limit</code> (optional): Number of codes per page (default: 100)</li>
+                            </ul>
+                        </div>
+                        <div class="response-example">
+                            <strong>Response Example:</strong>
+                            <pre><code>{
+  "pagination": {
+    "total": 9187,
+    "page": 1,
+    "limit": 100,
+    "pages": 92
+  },
+  "data": [
+    {
+      "codeValue": "A",
+      "codeDescription": "The Arts",
+      "codeNotes": "Use all A* codes for: specialist and general adult titles...",
+      "codeParent": "",
+      "issueNumber": 1,
+      "modified": 1.4
+    },
+    // More codes...
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-doc">
+                        <h4>3. Get a Specific Code</h4>
+                        <p>Retrieves details for a specific Thema Subject Code.</p>
+                        <div class="endpoint-details">
+                            <div><strong>Endpoint:</strong> <code>GET /api/v1/codes/:codeValue</code></div>
+                            <div><strong>Method:</strong> GET</div>
+                            <div><strong>URL Parameters:</strong></div>
+                            <ul>
+                                <li><code>codeValue</code>: The value of the code to retrieve</li>
+                            </ul>
+                        </div>
+                        <div class="response-example">
+                            <strong>Response Example:</strong>
+                            <pre><code>{
+  "codeValue": "AB",
+  "codeDescription": "The arts: general topics",
+  "codeNotes": null,
+  "codeParent": "A",
+  "issueNumber": 1,
+  "modified": 1.5
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-doc">
+                        <h4>4. Search for Codes</h4>
+                        <p>Searches for Thema Subject Codes based on query parameters.</p>
+                        <div class="endpoint-details">
+                            <div><strong>Endpoint:</strong> <code>GET /api/v1/codes/search</code></div>
+                            <div><strong>Method:</strong> GET</div>
+                            <div><strong>Query Parameters:</strong></div>
+                            <ul>
+                                <li><code>query</code> (optional): Search term to match against code values and
+                                    descriptions</li>
+                                <li><code>parent</code> (optional): Filter codes by parent code value</li>
+                                <li><code>page</code> (optional): Page number for pagination (default: 1)</li>
+                                <li><code>limit</code> (optional): Number of codes per page (default: 100)</li>
+                            </ul>
+                        </div>
+                        <div class="response-example">
+                            <strong>Response Example:</strong>
+                            <pre><code>{
+  "pagination": {
+    "total": 42,
+    "page": 1,
+    "limit": 100,
+    "pages": 1
+  },
+  "data": [
+    {
+      "codeValue": "ABC",
+      "codeDescription": "Conservation, restoration and care of artworks",
+      "codeNotes": "Use with: other A* codes for works about...",
+      "codeParent": "AB",
+      "issueNumber": 1,
+      "modified": 1.5
+    },
+    // More codes...
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-doc">
+                        <h4>5. Get Children of a Code</h4>
+                        <p>Retrieves all direct children of a specific Thema Subject Code.</p>
+                        <div class="endpoint-details">
+                            <div><strong>Endpoint:</strong> <code>GET /api/v1/codes/:codeValue/children</code></div>
+                            <div><strong>Method:</strong> GET</div>
+                            <div><strong>URL Parameters:</strong></div>
+                            <ul>
+                                <li><code>codeValue</code>: The value of the parent code</li>
+                            </ul>
+                        </div>
+                        <div class="response-example">
+                            <strong>Response Example:</strong>
+                            <pre><code>{
+  "parent": "A",
+  "count": 26,
+  "children": [
+    {
+      "codeValue": "AB",
+      "codeDescription": "The arts: general topics",
+      "codeNotes": null,
+      "codeParent": "A",
+      "issueNumber": 1,
+      "modified": 1.5
+    },
+    // More codes...
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <h3>Error Handling</h3>
+                    <p>The API uses standard HTTP status codes to indicate the success or failure of a request. Error
+                        responses will be in JSON format and include a message detailing the error.</p>
+
+                    <div class="response-example">
+                        <strong>Common Error Response Structure:</strong>
+                        <pre><code>{
+  "error": {
+    "status": 404,
+    "message": "Code with value 'XYZ' not found",
+    "code": "CODE_NOT_FOUND"
+  }
+}</code></pre>
+                    </div>
+
+                    <div class="status-codes">
+                        <strong>Common Status Codes:</strong>
+                        <ul>
+                            <li><strong>200 OK:</strong> The request was successful.</li>
+                            <li><strong>400 Bad Request:</strong> The request was malformed or contained invalid
+                                parameters.</li>
+                            <li><strong>404 Not Found:</strong> The requested resource could not be found.</li>
+                            <li><strong>500 Internal Server Error:</strong> An unexpected error occurred on the server.
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
