@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odin's Library - Thema API</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>Odin's Library - Thema API</h1>
+            </div>
+            <div id="metadata-badge" class="metadata-badge">
+                <span class="metadata-item">Version: <span id="version-number">-</span></span>
+                <span class="metadata-item">Updated: <span id="last-updated">-</span></span>
+                <span class="metadata-item">Codes: <span id="total-codes">-</span></span>
+            </div>
+        </header>
+
+        <!-- Top Section: Menu -->
+        <nav class="endpoint-menu">
+            <div class="endpoint active" data-endpoint="list-codes">
+                <i class="fas fa-list"></i>
+                <span>List Codes</span>
+            </div>
+            <div class="endpoint" data-endpoint="search-codes">
+                <i class="fas fa-search"></i>
+                <span>Search Codes</span>
+            </div>
+            <div class="endpoint" data-endpoint="get-code">
+                <i class="fas fa-info-circle"></i>
+                <span>Get Code</span>
+            </div>
+            <div class="endpoint" data-endpoint="get-children">
+                <i class="fas fa-sitemap"></i>
+                <span>Get Children</span>
+            </div>
+        </nav>
+
+        <!-- Middle Section: User Input -->
+        <section class="input-section">
+            <div class="endpoint-pane active" id="list-codes-pane">
+                <h2>List Codes</h2>
+                <div class="input-controls">
+                    <div class="input-group">
+                        <label for="list-page">Page</label>
+                        <input type="number" id="list-page" value="1" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="list-limit">Limit</label>
+                        <input type="number" id="list-limit" value="10" min="1" max="100">
+                    </div>
+                    <button id="list-submit" class="btn-primary">Get Codes</button>
+                </div>
+            </div>
+
+            <div class="endpoint-pane" id="search-codes-pane">
+                <h2>Search Codes</h2>
+                <div class="input-controls">
+                    <div class="input-group">
+                        <label for="search-query">Query</label>
+                        <input type="text" id="search-query" placeholder="Search by code value or description">
+                    </div>
+                    <div class="input-group">
+                        <label for="search-parent">Parent Code</label>
+                        <input type="text" id="search-parent" placeholder="Filter by parent code">
+                    </div>
+                    <div class="input-group">
+                        <label for="search-page">Page</label>
+                        <input type="number" id="search-page" value="1" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="search-limit">Limit</label>
+                        <input type="number" id="search-limit" value="10" min="1" max="100">
+                    </div>
+                    <button id="search-submit" class="btn-primary">Search</button>
+                </div>
+            </div>
+
+            <div class="endpoint-pane" id="get-code-pane">
+                <h2>Get Code Details</h2>
+                <div class="input-controls">
+                    <div class="input-group">
+                        <label for="code-value">Code Value</label>
+                        <input type="text" id="code-value" placeholder="Enter code value">
+                    </div>
+                    <button id="code-submit" class="btn-primary">Get Details</button>
+                </div>
+            </div>
+
+            <div class="endpoint-pane" id="get-children-pane">
+                <h2>Get Code Children</h2>
+                <div class="input-controls">
+                    <div class="input-group">
+                        <label for="parent-value">Parent Code Value</label>
+                        <input type="text" id="parent-value" placeholder="Enter parent code value">
+                    </div>
+                    <button id="children-submit" class="btn-primary">Get Children</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Section: Output -->
+        <section class="output-section">
+            <div class="output-header">
+                <div class="output-title">Response</div>
+                <div class="output-controls">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="formatted" id="view-formatted">Formatted</button>
+                        <button class="view-btn" data-view="json" id="view-json">JSON</button>
+                    </div>
+                    <button id="copy-output" class="btn-icon" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="output-container">
+                <div class="output-content formatted active">
+                    <div id="output-formatted">
+                        <div class="placeholder">Execute a request to see results</div>
+                    </div>
+                </div>
+                <div class="output-content json">
+                    <pre id="output-json"><code>// JSON output will appear here</code></pre>
+                </div>
+            </div>
+
+            <div class="request-info">
+                <div class="request-url">
+                    <span class="label">URL:</span> <span id="request-url">-</span>
+                </div>
+                <div class="response-time">
+                    <span class="label">Response Time:</span> <span id="response-time">-</span>
+                </div>
+            </div>
+
+            <div id="pagination" class="pagination"></div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

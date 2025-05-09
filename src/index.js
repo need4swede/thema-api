@@ -15,6 +15,9 @@ app.use(cors()); // Enable CORS
 app.use(morgan('combined')); // HTTP request logging
 app.use(express.json()); // Parse JSON request bodies
 
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
 // Load data
 let themaData;
 try {
@@ -265,14 +268,20 @@ app.get('/api/v1/codes/:codeValue/children', (req, res) => {
 });
 
 // Error handling for undefined routes
-app.use((req, res) => {
-    res.status(404).json({
-        error: {
-            status: 404,
-            message: 'Endpoint not found',
-            code: 'ENDPOINT_NOT_FOUND'
-        }
-    });
+app.use((req, res, next) => {
+    // If the request is for an API endpoint
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({
+            error: {
+                status: 404,
+                message: 'API endpoint not found',
+                code: 'ENDPOINT_NOT_FOUND'
+            }
+        });
+    }
+
+    // For all other routes, serve the frontend
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 // Start the server
