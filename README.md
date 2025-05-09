@@ -6,6 +6,8 @@ A REST API for accessing Thema Subject Codes and their associated metadata.
 
 This API provides access to Thema Subject Codes and their associated metadata, sourced from a definitive JSON file. It follows RESTful principles and returns data in JSON format.
 
+Try the API for yourself: <a href="https://thema.odinslibrary.net" target="_blank">Thema API - WebUI</a>
+
 ## API Documentation
 
 ### Base URL
