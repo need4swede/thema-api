@@ -40,3 +40,4 @@ ENV/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+/.venv
